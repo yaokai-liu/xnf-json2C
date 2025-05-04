@@ -213,7 +213,7 @@ class Generator:
         )
         with open(self.OUT_DIR / "action-table.gen.c", 'w') as fp:
             fp.write(content)
-        _license = Tp(self.license).substitute(filename="action-table.gen.c")
+        _license = Tp(self.license).substitute(filename="action-table.gen.h")
         content_h = Tp(self.get_temp_from("action-table.h.tpl")).substitute(
             license=_license, state_enum=',\n  '.join(state_enum)
         )
