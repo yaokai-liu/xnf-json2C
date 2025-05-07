@@ -28,6 +28,7 @@ TERMINALS = {
         "BIT_FIELD": 0,
         "PATTERN": 0,
         "SET": "set",
+        "LIST": "list",
         "WIDTH": 0,
         "LEFT_PAREN": "(",
         "LEFT_BRACKET": "{",

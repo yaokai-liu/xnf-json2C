@@ -35,7 +35,7 @@ if __name__ == '__main__':
     myLicense = Tp(LICENSE_TPL).substitute(
         projectDescription="xMachine - A Backend Generator for Compilers",
         projectName="machine",
-        moduleName="generated",
+        moduleName="grammar",
         filename="${filename}",
     )
 
