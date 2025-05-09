@@ -1,7 +1,7 @@
 TERMINALS = {
         "AT": "@",
-        "BOOL_AND": 0,
-        "BOOL_OR": 0,
+        "BOOL_AND": "&&",
+        "BOOL_OR": "||",
         "BOOL_NOT": "!",
         "COND_BIN_OP": 0,
         "COND_SIN_OP": 0,
