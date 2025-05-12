@@ -1,17 +1,18 @@
 TERMINALS = {
     "AT": "@",
     "DOT": ".",
+    "PTR": "->",
     "COMMA": ",",
     "COLON": ":",
     "CONCAT": "`",
-    "OP_WIDTH": "#",
+    "HASHTAG": "#",
     "SEMICOLON": ";",
     "QUESTION_MARK": "?",
     "LEFT_PAREN": "(",
-    "LEFT_BRACKET": "{",
-    "LEFT_SQUARE_BRACKET": "[",
     "RIGHT_PAREN": ")",
+    "LEFT_BRACKET": "{",
     "RIGHT_BRACKET": "}",
+    "LEFT_SQUARE_BRACKET": "[",
     "RIGHT_SQUARE_BRACKET": "]",
     "ASSIGN": "=",
 
@@ -37,6 +38,7 @@ TERMINALS = {
     "RETURN": "return",
     "WITH": "with",
     "ENUM": "enum",
+    "TYPEOF": "typeof",
     "VAR": "var",
 
     "BOOL_BIN_OP": 0,
@@ -52,6 +54,7 @@ TERMINALS = {
     "ARITH_3_BIN_OP": 0,
     "ARITH_3_SIN_OP": 0,
 
+    "CHARACTER_LITERAL": 0,
     "STRING_LITERAL": 0,
     "IDENTIFIER": 0,
     "TERMINATOR": 0,
