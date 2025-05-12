@@ -51,12 +51,13 @@ class Action:
     def __init__(self, p, generator):
         if not p.startswith('('):
             rule = Rule(p, generator)
-            self.action = "reduce"
+            self.action = f"{generator.rule_prefix}_action_reduce"
             self.type = f"enum_{rule.target}"
             self.count = len(rule.items)
-            self.offset = f"{p}"
+            self.offset = f"enum_{generator.rule_prefix}_{p}" if p != "__EXTEND_RULE__" \
+                          else f"enum_{generator.rule_prefix}_{rule.target}_EXT"
         else:
-            self.action = "stack"
+            self.action = f"{generator.rule_prefix}_action_stack"
             self.type = 0
             self.count = 0
             self.offset = f"{generator.state_to_enum(p)[0]}"
@@ -102,6 +103,7 @@ class Generator:
             self.status[s], self.reflect[p] = self.table[p], s
         self.extend_tokens = self.tokens
         self.context = "void"
+        self.rule_prefix = ""
 
     def set_license(self, license: str):
         self.license = license
@@ -111,6 +113,9 @@ class Generator:
     def set_context(self, context: str):
         self.context = context
 
+    def set_rule_prefix(self, prefix: str):
+        self.rule_prefix = prefix
+
     def get_json_from(self, filename: str):
         with open(self.JSON_DIR / filename, 'r') as fp:
             return json.load(fp)
@@ -118,6 +123,17 @@ class Generator:
     def get_temp_from(self, filename: str):
         with open(self.TEMPLATE_DIR / filename, 'r') as fp:
             return fp.read()
+    def rule_to_name(self, rule: str):
+        if rule == '__EXTEND_RULE__':
+            return f'{self.rule_prefix}_{self.GRAMMAR_TARGET}_EXT'
+        else:
+            return f'{self.rule_prefix}_{rule}'
+
+    def rule_to_enum(self, rule: str):
+        return "enum_" + self.rule_to_name(rule)
+
+    def rule_target(self, rule: str):
+        return re.sub(r'_\d+$', '', rule) if rule != '__EXTEND_RULE__' else self.GRAMMAR_TARGET
 
     def gen_terminals(self):
         _license = Tp(self.license).substitute(filename="terminal.gen.c")
@@ -129,40 +145,34 @@ class Generator:
         with open(self.OUT_DIR / "terminal.gen.c", 'w') as fp:
             fp.write(terminals_entry)
 
-    @staticmethod
-    def state_to_enum(p):
+    def state_to_enum(self, p):
         p = p.strip('()').split(', ')
         _state = '_'.join(p)
         current = 'TERMINATOR' if len(p) == 1 and p[0] == '' else p[-1]
-        _state = ('__' + _state) if _state else '__EMPTY__'
+        _state = f'{self.rule_prefix}_state_{_state}' if _state else f'{self.rule_prefix}_state_'
         return _state, current
 
-    def gen_reduces(self):
+    def gen_rules(self):
         rule_names = self.rules.keys()
         args = f"(Token argv[], {self.context} *, const Allocator * allocator);"
-        enum_reduces = sorted(f"{r} = {i}" for i, r in enumerate(rule_names))
-        reduces = sorted(f"{re.sub(r'_\d+$', '', r)} * p_{r}" + args
-                         if r != '__EXTEND_RULE__'
-                         else f"{self.GRAMMAR_TARGET} * p__{self.GRAMMAR_TARGET}__" + args
-                         for r in rule_names)
-        assign_reduces = sorted([f"[{r}] = (fn_reduce *) p_{r}" if r != '__EXTEND_RULE__'
-                                 else f"[{r}] = (fn_reduce *) p__{self.GRAMMAR_TARGET}__"
-                                 for r in rule_names])
-        template = Tp(self.get_temp_from("reduce.h.tpl"))
-        _license = Tp(self.license).substitute(filename="reduce.gen.h")
+        enum_reduces = sorted(f"{self.rule_to_enum(r)} = {i}" for i, r in enumerate(rule_names))
+        rules = sorted(f"{self.rule_target(r)} * {self.rule_to_name(r)} {args};" for r in rule_names)
+        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{self.rule_prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
+        template = Tp(self.get_temp_from("rules.h.tpl"))
+        _license = Tp(self.license).substitute(filename="rules.gen.h")
         content = template.substitute(
             license=_license,
             enum_reduces=',\n  '.join(enum_reduces),
-            reduces='\n'.join(reduces)
+            reduces='\n'.join(rules)
         )
-        with open(self.OUT_DIR / "reduce.gen.h", 'w') as fp:
+        with open(self.OUT_DIR / "rules.gen.h", 'w') as fp:
             fp.write(content)
-        _license = Tp(self.license).substitute(filename="target.gen.c")
-        content = Tp(self.get_temp_from("target.c.tpl")).substitute(
+        _license = Tp(self.license).substitute(filename="rules.gen.c")
+        content = Tp(self.get_temp_from("rules.c.tpl")).substitute(
             license=_license,
             assign_reduces=',\n  '.join(assign_reduces)
         )
-        with open(self.OUT_DIR / "target.gen.c", 'w') as fp:
+        with open(self.OUT_DIR / "rules.gen.c", 'w') as fp:
             fp.write(content)
 
 
@@ -206,14 +216,14 @@ class Generator:
         content = template.substitute(
             license=_license,
             actions=",\n  ".join(actions),
-            jumps=", ".join(jumps),
+            jumps=", \n".join(jumps),
             units=", \n  ".join(units),
             states=",\n  ".join(states),
             currents=",\n  ".join(currents),
         )
         with open(self.OUT_DIR / "action-table.gen.c", 'w') as fp:
             fp.write(content)
-        _license = Tp(self.license).substitute(filename="action-table.gen.c")
+        _license = Tp(self.license).substitute(filename="action-table.gen.h")
         content_h = Tp(self.get_temp_from("action-table.h.tpl")).substitute(
             license=_license, state_enum=',\n  '.join(state_enum)
         )
@@ -222,7 +232,7 @@ class Generator:
 
     def generate(self):
         self.gen_terminals()
-        self.gen_reduces()
+        self.gen_rules()
         self.gen_action_table()
 
 def gen_token_enum(template: Path, _license: str, tokens, out):
@@ -234,11 +244,11 @@ def gen_token_enum(template: Path, _license: str, tokens, out):
     enums_entry = template.substitute(license=_license, enums=enums)
     with open(out, 'w') as fp:
         fp.write(enums_entry)
-def gen_token_name(template: Path, license: str, tokens, out):
+def gen_token_name(template: Path, _license: str, tokens, out):
     with open(template, 'r') as fp:
         temp = fp.read()
     template = Tp(temp)
     names = ',\n  '.join([f'[enum_{t}] = string_t("{t}")' for t in tokens])
-    names_entry = template.substitute(license=license, names=names)
+    names_entry = template.substitute(license=_license, names=names)
     with open(out, 'w') as fp:
         fp.write(names_entry)
