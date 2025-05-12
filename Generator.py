@@ -149,7 +149,7 @@ class Generator:
         p = p.strip('()').split(', ')
         _state = '_'.join(p)
         current = 'TERMINATOR' if len(p) == 1 and p[0] == '' else p[-1]
-        _state = f'{self.rule_prefix}_state_{_state}' if _state else f'{self.rule_prefix}_state__'
+        _state = f'{self.rule_prefix}_state_{_state}' if _state else f'{self.rule_prefix}_state_'
         return _state, current
 
     def gen_rules(self):
