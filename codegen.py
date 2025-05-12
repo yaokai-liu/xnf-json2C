@@ -68,6 +68,8 @@ if __name__ == '__main__':
                    OUT_DIR / "tokens.gen.c")
 
     GMachine.set_context("ParseContext")
+    GMachine.set_rule_prefix("Parse")
     GMacro.set_context("MacroContext")
+    GMacro.set_rule_prefix("Macro")
     GMachine.generate()
     GMacro.generate()
