@@ -216,7 +216,7 @@ class Generator:
         content = template.substitute(
             license=_license,
             actions=",\n  ".join(actions),
-            jumps=", ".join(jumps),
+            jumps=", \n".join(jumps),
             units=", \n  ".join(units),
             states=",\n  ".join(states),
             currents=",\n  ".join(currents),
