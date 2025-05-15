@@ -50,9 +50,9 @@ if __name__ == '__main__':
     myLicense = Tp(myLicense).substitute(filename="${filename}")
 
     gen_token_enum(TEMPLATE_DIR / "tokens.h.tpl",
-                   Tp(myLicense).substitute(filename="tokens.gen.h"),
+                   Tp(myLicense).substitute(filename="generated/tokens.gen.h"),
                    tokens,
-                   OUT_DIR / "tokens.gen.h")
+                   OUT_DIR / "generated/tokens.gen.h")
 
     gen_token_name(TEMPLATE_DIR / "tokens.c.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.c"),
@@ -60,4 +60,5 @@ if __name__ == '__main__':
                    OUT_DIR / "tokens.gen.c")
 
     GRegex.set_context("RegexContext")
+    GRegex.set_rule_prefix("Regex")
     GRegex.generate()
