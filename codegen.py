@@ -42,7 +42,7 @@ if __name__ == '__main__':
     GRegex = Generator(json_dir=JSON_DIR / "regex",
                        template_dir=TEMPLATE_DIR / "regex",
                        out_dir=OUT_DIR / "regex",
-                       target="Regexp")
+                       target="Regex")
     GRegex.set_license(Tp(myLicense).substitute(filename="${filename}"))
     tokens = sorted(set(GRegex.tokens))
     GRegex.set_extend_tokens(tokens)
@@ -50,9 +50,9 @@ if __name__ == '__main__':
     myLicense = Tp(myLicense).substitute(filename="${filename}")
 
     gen_token_enum(TEMPLATE_DIR / "tokens.h.tpl",
-                   Tp(myLicense).substitute(filename="generated/tokens.gen.h"),
+                   Tp(myLicense).substitute(filename="tokens.gen.h"),
                    tokens,
-                   OUT_DIR / "generated/tokens.gen.h")
+                   OUT_DIR / "tokens.gen.h")
 
     gen_token_name(TEMPLATE_DIR / "tokens.c.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.c"),
