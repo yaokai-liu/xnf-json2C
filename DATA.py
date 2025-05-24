@@ -2,7 +2,7 @@ TERMINALS = {
     "TERMINATOR": 0,
     "QUANTIFIER": 0,
     "CHARSET_ESCAPE": 0,
-    "CHAR": 0,
+    "SYMBOL": 0,
     "LEFT_SQUARE_BRACKET": '[',
     "RIGHT_SQUARE_BRACKET": ']',
     "LEFT_PARENTHESIS": '(',
