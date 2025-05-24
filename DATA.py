@@ -12,4 +12,5 @@ TERMINALS = {
     "INVERSE": '^',
     "SPLIT": '|',
     "EXCLAIMA": '!',
+    "ASSIGNER": "=",
 }

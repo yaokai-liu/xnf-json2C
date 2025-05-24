@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 from string import Template as Tp
 from Generator import Generator, gen_token_enum, gen_token_name
+from DATA import TERMINALS
 LICENSE_TPL = """/**
  * License
  *
@@ -44,7 +45,7 @@ if __name__ == '__main__':
                        out_dir=OUT_DIR / "regex",
                        target="Regex")
     GRegex.set_license(Tp(myLicense).substitute(filename="${filename}"))
-    tokens = sorted(set(GRegex.tokens))
+    tokens = sorted(set(GRegex.tokens) | set(TERMINALS.keys()))
     GRegex.set_extend_tokens(tokens)
 
     myLicense = Tp(myLicense).substitute(filename="${filename}")
