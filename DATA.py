@@ -13,4 +13,5 @@ TERMINALS = {
     "SPLIT": '|',
     "EXCLAIMA": '!',
     "ASSIGNER": "=",
+    "SEMICOLON": ";",
 }
