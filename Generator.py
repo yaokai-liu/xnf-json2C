@@ -184,7 +184,7 @@ class Generator:
         state_enum, states, actions, jumps, units, currents = [], [], [], [], [], []
         for p, q in self.table.items():
             _state, current = self.state_to_enum(p)
-            state_enum.append(f'{_state} = {len(state_enum)}')
+            state_enum.append(f'{_state} = {len(state_enum) + 1}')
             _tokens = q.keys()
             _terminals = sorted(_tokens & set(self.terminals), key=c2k(token_cmp))
             _targets = sorted(_tokens & set(self.targets), key=c2k(token_cmp))
