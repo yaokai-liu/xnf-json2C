@@ -86,15 +86,15 @@ class Generator:
         self.license = None
 
         self.__tokens = self.get_json_from("tokens.json")
-        self.terminals = sorted(['TERMINATOR'] + self.__tokens['terminal'])
+        self.terminals = [self.format(t) for t in sorted(self.__tokens['terminal'])]
         self.targets = self.__tokens['non-terminal']
         self.targets.remove("~")
         self.targets = sorted(self.targets)
         self.tokens = sorted(self.terminals + self.targets)
-        if os.path.isfile(self.JSON_DIR / "machine-compact.json"):
-            self.table = self.get_json_from("machine-compact.json")
+        if os.path.isfile(self.JSON_DIR / "automaton-compact.json"):
+            self.table = self.get_json_from("automaton-compact.json")
         else:
-            self.table = self.get_json_from("machine.json")
+            self.table = self.get_json_from("automaton.json")
         for val in self.table.values():
             if '$' in val.keys(): val['TERMINATOR'] = val.pop('$')
         self.rules = self.get_json_from("rules.json")
@@ -115,6 +115,10 @@ class Generator:
 
     def set_prefix(self, prefix: str):
         self.prefix = prefix
+
+    @classmethod
+    def format(cls, token: str):
+        return "TERMINATOR" if token == "$" else token
 
     def get_json_from(self, filename: str):
         with open(self.JSON_DIR / filename, 'r') as fp:
