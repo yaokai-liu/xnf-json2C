@@ -59,17 +59,19 @@ if __name__ == '__main__':
 
     gen_token_enum(TEMPLATE_DIR / "tokens.h.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.h"),
+                   "Parse",
                    tokens,
                    OUT_DIR / "tokens.gen.h")
 
     gen_token_name(TEMPLATE_DIR / "tokens.c.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.c"),
+                   "Macro",
                    tokens,
                    OUT_DIR / "tokens.gen.c")
 
     GMachine.set_context("ParseContext")
-    GMachine.set_rule_prefix("Parse")
+    GMachine.set_prefix("Parse")
     GMacro.set_context("MacroContext")
-    GMacro.set_rule_prefix("Macro")
+    GMacro.set_prefix("Macro")
     GMachine.generate()
     GMacro.generate()
