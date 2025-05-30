@@ -4,6 +4,7 @@ TERMINALS = {
     "IF": "if",
     "FOR": "for",
     "ELSE": "else",
+    "ENUM": "enum",
     "TOKEN": "token",
     "WHILE": "while",
 
@@ -11,15 +12,20 @@ TERMINALS = {
     "IDENTIFIER": 0,
     "BUILTIN_TYPE": 0,
     "BUILTIN_VARIABLE": 0,
+    "BUILTIN_FUNCTION": 0,
 
     "BOOL_OR": "||",
     "BOOL_NOT": "!",
     "BOOL_AND": "&&",
 
+    "AT": "@",
     "DOT": ".",
     "COMMA": ",",
+    "COLON": ":",
     "ASSIGNER": "=",
     "SEMICOLON": ";",
+    "QUESTION_MARK": "?",
+
     "LEFT_BRACKET": "{",
     "RIGHT_BRACKET": "}",
     "LEFT_PARENTHESIS": "(",
