@@ -63,5 +63,6 @@ if __name__ == '__main__':
                    OUT_DIR / "tokens.gen.c")
 
     GXLR.set_context("LRContext")
+    GXLR.set_token_prefix("XLR")
     GXLR.set_prefix("XLR")
     GXLR.generate()
