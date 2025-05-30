@@ -165,7 +165,7 @@ class Generator:
 
     def gen_rules(self):
         rule_names = self.rules.keys()
-        args = f"(Token argv[], {self.context} *, ErrInfo *, const Allocator * allocator);"
+        args = f"(Token argv[], {self.context} *, ErrInfo *, const Allocator * allocator)"
         enum_reduces = sorted(f"{self.rule_to_enum(r)} = {i + 1}" for i, r in enumerate(rule_names))
         rules = sorted(f"{self.rule_target(r)} * {self.rule_to_name(r)} {args};" for r in rule_names)
         assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{self.prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
