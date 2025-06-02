@@ -36,6 +36,7 @@ TERMINALS = {
 
     "COND_SIN_OP": 0,
     "COND_BIN_OP": 0,
+    "COMPARE_OP": 0,
 
     "ARITH_0_BIN_OP": 0,
     "ARITH_1_BIN_OP": 0,
@@ -48,8 +49,7 @@ TERMINALS = {
     "ARITH_3_SIN_OP": 0,
     "ARITH_4_SIN_OP": 0,
 
-    "INTEGRATED_AHEAD_OP": 0,
-    "INTEGRATED_FOLLOW_OP": 0,
+    "INTEGRATED_AFFIX_OP": 0,
 
     "TERMINATOR": 0
 }
