@@ -51,13 +51,13 @@ class Action:
     def __init__(self, p, generator):
         if not p.startswith('('):
             rule = Rule(p, generator)
-            self.action = f"{generator.rule_prefix}_action_reduce"
-            self.type = f"enum_{rule.target}"
+            self.action = f"{generator.prefix}_action_reduce"
+            self.type = f"{generator.token_prefix}_TOKEN_{rule.target}"
             self.count = len(rule.items)
-            self.offset = f"enum_{generator.rule_prefix}_{p}" if p != "__EXTEND_RULE__" \
-                          else f"enum_{generator.rule_prefix}_{rule.target}_EXT"
+            self.offset = f"{generator.prefix}_RULE_{p}" if p != "__EXTEND_RULE__" \
+                          else f"{generator.prefix}_RULE_{rule.target}_EXT"
         else:
-            self.action = f"{generator.rule_prefix}_action_stack"
+            self.action = f"{generator.prefix}_action_stack"
             self.type = 0
             self.count = 0
             self.offset = f"{generator.state_to_enum(p)[0]}"
@@ -86,15 +86,15 @@ class Generator:
         self.license = None
 
         self.__tokens = self.get_json_from("tokens.json")
-        self.terminals = sorted(['TERMINATOR'] + self.__tokens['terminal'])
+        self.terminals = [self.format(t) for t in sorted(self.__tokens['terminal'])]
         self.targets = self.__tokens['non-terminal']
         self.targets.remove("~")
         self.targets = sorted(self.targets)
         self.tokens = sorted(self.terminals + self.targets)
-        if os.path.isfile(self.JSON_DIR / "machine-compact.json"):
-            self.table = self.get_json_from("machine-compact.json")
+        if os.path.isfile(self.JSON_DIR / "automaton-compact.json"):
+            self.table = self.get_json_from("automaton-compact.json")
         else:
-            self.table = self.get_json_from("machine.json")
+            self.table = self.get_json_from("automaton.json")
         for val in self.table.values():
             if '$' in val.keys(): val['TERMINATOR'] = val.pop('$')
         self.rules = self.get_json_from("rules.json")
@@ -103,18 +103,26 @@ class Generator:
             self.status[s], self.reflect[p] = self.table[p], s
         self.extend_tokens = self.tokens
         self.context = "void"
-        self.rule_prefix = ""
+        self.token_prefix = ""
+        self.prefix = ""
 
-    def set_license(self, license: str):
-        self.license = license
+    def set_license(self, _license: str):
+        self.license = _license
     def set_extend_tokens(self, tokens):
         self.extend_tokens = tokens
 
     def set_context(self, context: str):
         self.context = context
 
-    def set_rule_prefix(self, prefix: str):
-        self.rule_prefix = prefix
+    def set_prefix(self, prefix: str):
+        self.prefix = prefix
+
+    def set_token_prefix(self, prefix: str):
+        self.token_prefix = prefix
+
+    @classmethod
+    def format(cls, token: str):
+        return "TERMINATOR" if token == "$" else token
 
     def get_json_from(self, filename: str):
         with open(self.JSON_DIR / filename, 'r') as fp:
@@ -125,12 +133,15 @@ class Generator:
             return fp.read()
     def rule_to_name(self, rule: str):
         if rule == '__EXTEND_RULE__':
-            return f'{self.rule_prefix}_{self.GRAMMAR_TARGET}_EXT'
+            return f'{self.prefix}_{self.GRAMMAR_TARGET}_EXT'
         else:
-            return f'{self.rule_prefix}_{rule}'
+            return f'{self.prefix}_{rule}'
 
     def rule_to_enum(self, rule: str):
-        return "enum_" + self.rule_to_name(rule)
+        if rule == '__EXTEND_RULE__':
+            return f'{self.prefix}_RULE_{self.GRAMMAR_TARGET}_EXT'
+        else:
+            return f'{self.prefix}_RULE_{rule}'
 
     def rule_target(self, rule: str):
         return re.sub(r'_\d+$', '', rule) if rule != '__EXTEND_RULE__' else self.GRAMMAR_TARGET
@@ -138,9 +149,9 @@ class Generator:
     def gen_terminals(self):
         _license = Tp(self.license).substitute(filename="terminal.gen.c")
         template = Tp(self.get_temp_from("terminal.c.tpl"))
-        body = ',\n  '.join([f'enum_{t}' for t in self.terminals if TERMINALS[t] != 0])
-        strings = ',\n  '.join([f'[enum_{t}] = string_t("{TERMINALS[t]}")' for t in self.terminals if TERMINALS[t] != 0])
-        string_lens = ',\n  '.join([f'[enum_{t}] = {len(TERMINALS[t])}' for t in self.terminals if TERMINALS[t] != 0])
+        body = ',\n  '.join([f'{self.token_prefix}_TOKEN_{t}' for t in self.terminals if TERMINALS[t] != 0])
+        strings = ',\n  '.join([f'[{self.token_prefix}_TOKEN_{t}] = string_t("{TERMINALS[t]}")' for t in self.terminals if TERMINALS[t] != 0])
+        string_lens = ',\n  '.join([f'[{self.token_prefix}_TOKEN_{t}] = {len(TERMINALS[t])}' for t in self.terminals if TERMINALS[t] != 0])
         terminals_entry = template.substitute(license=_license, strings=strings, string_lens=string_lens, terminals=body)
         with open(self.OUT_DIR / "terminal.gen.c", 'w') as fp:
             fp.write(terminals_entry)
@@ -149,15 +160,15 @@ class Generator:
         p = p.strip('()').split(', ')
         _state = '_'.join(p)
         current = 'TERMINATOR' if len(p) == 1 and p[0] == '' else p[-1]
-        _state = f'{self.rule_prefix}_state_{_state}' if _state else f'{self.rule_prefix}_state_'
+        _state = f'{self.prefix}_state_{_state}' if _state else f'{self.prefix}_state_'
         return _state, current
 
     def gen_rules(self):
         rule_names = self.rules.keys()
-        args = f"(Token argv[], {self.context} *, ErrInfo *, const Allocator * allocator);"
-        enum_reduces = sorted(f"{self.rule_to_enum(r)} = {i}" for i, r in enumerate(rule_names))
+        args = f"(Token argv[], {self.context} *, ErrInfo *, const Allocator * allocator)"
+        enum_reduces = sorted(f"{self.rule_to_enum(r)} = {i + 1}" for i, r in enumerate(rule_names))
         rules = sorted(f"{self.rule_target(r)} * {self.rule_to_name(r)} {args};" for r in rule_names)
-        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{self.rule_prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
+        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{self.prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
         template = Tp(self.get_temp_from("rules.h.tpl"))
         _license = Tp(self.license).substitute(filename="rules.gen.h")
         content = template.substitute(
@@ -206,10 +217,10 @@ class Generator:
                 items[t] = i
             for i, t in enumerate(sorted(_tokens)):
                 ndx.append(str(i))
-                units.append(f"{{.type = enum_{t}, .offset = {items[t]}}}")
+                units.append(f"{{.type = {self.token_prefix}_TOKEN_{t}, .offset = {items[t]}}}")
             string = ', '.join([f".{k} = {v}" for k, v in state.items()])
             states.append(f"[{_state}] = {{{string}}}")
-            currents.append(f"[{_state}] = enum_{current}")
+            currents.append(f"[{_state}] = {self.token_prefix}_TOKEN_{current}")
 
         template = Tp(self.get_temp_from("action-table.c.tpl"))
         _license = Tp(self.license).substitute(filename="action-table.gen.c")
@@ -235,20 +246,20 @@ class Generator:
         self.gen_rules()
         self.gen_action_table()
 
-def gen_token_enum(template: Path, _license: str, tokens, out):
+def gen_token_enum(template: Path, _license: str, prefix: str, tokens, out):
     with open(template, 'r') as fp:
         temp = fp.read()
     template = Tp(temp)
-    enums = ',\n  '.join([f"enum_{t} = {i + 1}" for i, t in enumerate(tokens)])
+    enums = ',\n  '.join([f"{prefix}_TOKEN_{t} = {i + 1}" for i, t in enumerate(tokens)])
     enums += ',\n  ' + f'MAX_REAL_TOKEN = {len(tokens) + 1}'
     enums_entry = template.substitute(license=_license, enums=enums)
     with open(out, 'w') as fp:
         fp.write(enums_entry)
-def gen_token_name(template: Path, _license: str, tokens, out):
+def gen_token_name(template: Path, _license: str, prefix: str, tokens, out):
     with open(template, 'r') as fp:
         temp = fp.read()
     template = Tp(temp)
-    names = ',\n  '.join([f'[enum_{t}] = string_t("{t}")' for t in tokens])
+    names = ',\n  '.join([f'[{prefix}_TOKEN_{t}] = string_t("{t}")' for t in tokens])
     names_entry = template.substitute(license=_license, names=names)
     with open(out, 'w') as fp:
         fp.write(names_entry)
