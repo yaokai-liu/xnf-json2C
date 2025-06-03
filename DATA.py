@@ -15,10 +15,6 @@ TERMINALS = {
     "BUILTIN_VARIABLE": 0,
     "BUILTIN_FUNCTION": 0,
 
-    "BOOL_OR": "||",
-    "BOOL_NOT": "!",
-    "BOOL_AND": "&&",
-
     "AT": "@",
     "DOT": ".",
     "COMMA": ",",
