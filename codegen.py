@@ -52,14 +52,17 @@ if __name__ == '__main__':
 
     gen_token_enum(TEMPLATE_DIR / "tokens.h.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.h"),
+                   "Regex",
                    tokens,
                    OUT_DIR / "tokens.gen.h")
 
     gen_token_name(TEMPLATE_DIR / "tokens.c.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.c"),
+                   "Regex",
                    tokens,
                    OUT_DIR / "tokens.gen.c")
 
     GRegex.set_context("RegexContext")
-    GRegex.set_rule_prefix("Regex")
+    GRegex.set_token_prefix("Regex")
+    GRegex.set_prefix("Regex")
     GRegex.generate()
