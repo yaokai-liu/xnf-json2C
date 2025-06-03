@@ -8,7 +8,8 @@ TERMINALS = {
     "TOKEN": "token",
     "WHILE": "while",
 
-    "NUMBER": 0,
+    "FLOAT": 0,
+    "INTEGER": 0,
     "IDENTIFIER": 0,
     "BUILTIN_TYPE": 0,
     "BUILTIN_VARIABLE": 0,
@@ -38,18 +39,18 @@ TERMINALS = {
     "COND_BIN_OP": 0,
     "COMPARE_OP": 0,
 
-    "ARITH_0_BIN_OP": 0,
+    "ARITH_0_OP": 0,
+
     "ARITH_1_BIN_OP": 0,
     "ARITH_2_BIN_OP": 0,
     "ARITH_3_BIN_OP": 0,
 
-    "ARITH_0_SIN_OP": 0,
     "ARITH_1_SIN_OP": 0,
     "ARITH_2_SIN_OP": 0,
     "ARITH_3_SIN_OP": 0,
     "ARITH_4_SIN_OP": 0,
 
-    "INTEGRATED_AFFIX_OP": 0,
+    "INTEGRATED_OP": 0,
 
     "TERMINATOR": 0
 }
