@@ -251,7 +251,7 @@ def gen_token_enum(template: Path, _license: str, prefix: str, tokens, out):
         temp = fp.read()
     template = Tp(temp)
     enums = ',\n  '.join([f"{prefix}_TOKEN_{t} = {i + 1}" for i, t in enumerate(tokens)])
-    enums += ',\n  ' + f'MAX_REAL_TOKEN = {len(tokens) + 1}'
+    enums += ',\n  ' + f'{prefix}_MAX_REAL_TOKEN = {len(tokens) + 1}'
     enums_entry = template.substitute(license=_license, enums=enums)
     with open(out, 'w') as fp:
         fp.write(enums_entry)
