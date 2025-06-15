@@ -8,9 +8,8 @@ TERMINALS = {
     "TOKEN": "token",
     "WHILE": "while",
 
-    "FLOAT": 0,
-    "INTEGER": 0,
     "IDENTIFIER": 0,
+    "VAL_LITERAL": 0,
     "BUILTIN_TYPE": 0,
     "BUILTIN_VARIABLE": 0,
     "BUILTIN_FUNCTION": 0,
@@ -21,6 +20,7 @@ TERMINALS = {
     "COLON": ":",
     "ASSIGNER": "=",
     "SEMICOLON": ";",
+    "DOUBLE_COLON": "::",
     "QUESTION_MARK": "?",
 
     "LEFT_BRACKET": "{",
