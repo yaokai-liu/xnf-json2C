@@ -8,9 +8,10 @@ TERMINALS = {
     "TOKEN": "token",
     "WHILE": "while",
 
+    "TEXT": 0,
     "IDENTIFIER": 0,
+    "SINGLE_CHAR": 0,
     "VAL_LITERAL": 0,
-    "BUILTIN_TYPE": 0,
     "BUILTIN_VARIABLE": 0,
     "BUILTIN_FUNCTION": 0,
 
