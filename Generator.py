@@ -105,6 +105,8 @@ class Generator:
         self.context = "void"
         self.token_prefix = ""
         self.prefix = ""
+        self.types = dict()
+
 
     def set_license(self, _license: str):
         self.license = _license
@@ -119,6 +121,9 @@ class Generator:
 
     def set_token_prefix(self, prefix: str):
         self.token_prefix = prefix
+
+    def set_types(self, types: dict):
+        self.types = types
 
     @classmethod
     def format(cls, token: str):
@@ -144,7 +149,8 @@ class Generator:
             return f'{self.prefix}_RULE_{rule}'
 
     def rule_target(self, rule: str):
-        return re.sub(r'_\d+$', '', rule) if rule != '__EXTEND_RULE__' else self.GRAMMAR_TARGET
+        target = re.sub(r'_\d+$', '', rule) if rule != '__EXTEND_RULE__' else self.GRAMMAR_TARGET
+        return self.types.get(target) or target
 
     def gen_terminals(self):
         _license = Tp(self.license).substitute(filename="terminal.gen.c")
@@ -227,8 +233,8 @@ class Generator:
         content = template.substitute(
             license=_license,
             actions=",\n  ".join(actions),
-            jumps=", \n".join(jumps),
-            units=", \n  ".join(units),
+            jumps=",\n  ".join(jumps),
+            units=",\n  ".join(units),
             states=",\n  ".join(states),
             currents=",\n  ".join(currents),
         )
