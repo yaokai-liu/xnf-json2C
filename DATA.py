@@ -19,6 +19,7 @@ TERMINALS = {
     "DOT": ".",
     "COMMA": ",",
     "COLON": ":",
+    "SPLITER": "|",
     "ASSIGNER": "=",
     "SEMICOLON": ";",
     "DOUBLE_COLON": "::",
@@ -50,4 +51,9 @@ TERMINALS = {
     "INTEGRATED_OP": 0,
 
     "TERMINATOR": 0
+}
+TYPES = {
+    "Token": "LRToken",
+    "Tokens": "LRTokens",
+    "Pattern": "LRPattern",
 }

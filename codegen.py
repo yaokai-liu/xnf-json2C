@@ -2,7 +2,8 @@ import sys
 from pathlib import Path
 from string import Template as Tp
 from Generator import Generator, gen_token_enum, gen_token_name
-from DATA import TERMINALS
+from DATA import *
+
 LICENSE_TPL = """/**
  * License
  *
@@ -28,6 +29,7 @@ LICENSE_TPL = """/**
  * Copyright (c) 2024 Yaokai Liu. All rights reserved.
  **/
 """
+
 if __name__ == '__main__':
     JSON_DIR = Path(sys.argv[1])
     TEMPLATE_DIR = Path(sys.argv[2])
@@ -65,4 +67,5 @@ if __name__ == '__main__':
     GXLR.set_context("LRContext")
     GXLR.set_token_prefix("XLR")
     GXLR.set_prefix("XLR")
+    GXLR.set_types(TYPES)
     GXLR.generate()
