@@ -19,9 +19,9 @@ TERMINALS = {
     "DOT": ".",
     "COMMA": ",",
     "COLON": ":",
-    "SPLITER": "|",
     "ASSIGNER": "=",
     "SEMICOLON": ";",
+    "VERTICAL_BAR": "|",
     "DOUBLE_COLON": "::",
     "QUESTION_MARK": "?",
 
