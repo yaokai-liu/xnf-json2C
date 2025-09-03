@@ -34,35 +34,35 @@ if __name__ == '__main__':
     OUT_DIR = Path(sys.argv[3])
 
     myLicense = Tp(LICENSE_TPL).substitute(
-        projectDescription="xJSON - C Library to Parse xJSON to C",
-        projectName="xJSON",
+        projectDescription="xCONF - C Library to Parse xCONF to C",
+        projectName="xCONF",
         moduleName="grammar",
         filename="${filename}",
     )
 
-    XJSONGenerator = Generator(json_dir=JSON_DIR / "xJSON",
-                               template_dir=TEMPLATE_DIR / "xJSON",
-                               out_dir=OUT_DIR / "xJSON",
+    XCONFGenerator = Generator(json_dir=JSON_DIR / "xCONF",
+                               template_dir=TEMPLATE_DIR / "xCONF",
+                               out_dir=OUT_DIR / "xCONF",
                                target="Object")
-    XJSONGenerator.set_license(Tp(myLicense).substitute(filename="${filename}"))
-    tokens = sorted(set(XJSONGenerator.tokens) | set(TERMINALS.keys()))
-    XJSONGenerator.set_extend_tokens(tokens)
+    XCONFGenerator.set_license(Tp(myLicense).substitute(filename="${filename}"))
+    tokens = sorted(set(XCONFGenerator.tokens) | set(TERMINALS.keys()))
+    XCONFGenerator.set_extend_tokens(tokens)
 
     myLicense = Tp(myLicense).substitute(filename="${filename}")
 
     gen_token_enum(TEMPLATE_DIR / "tokens.h.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.h"),
-                   "XJSON",
+                   "XCONF",
                    tokens,
                    OUT_DIR / "tokens.gen.h")
 
     gen_token_name(TEMPLATE_DIR / "tokens.c.tpl",
                    Tp(myLicense).substitute(filename="tokens.gen.c"),
-                   "XJSON",
+                   "XCONF",
                    tokens,
                    OUT_DIR / "tokens.gen.c")
 
-    XJSONGenerator.set_context("XJSONContext")
-    XJSONGenerator.set_token_prefix("XJSON")
-    XJSONGenerator.set_prefix("XJSON")
-    XJSONGenerator.generate()
+    XCONFGenerator.set_context("XCONFContext")
+    XCONFGenerator.set_token_prefix("XCONF")
+    XCONFGenerator.set_prefix("XCONF")
+    XCONFGenerator.generate()
