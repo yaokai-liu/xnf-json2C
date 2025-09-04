@@ -1,5 +1,6 @@
 TERMINALS = {
     "DOT": ".",
+    "COLON": ":",
     "COMMA": ",",
     "LEFT_BRACKET": "{",
     "RIGHT_BRACKET": "}",
