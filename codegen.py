@@ -34,7 +34,7 @@ if __name__ == '__main__':
     OUT_DIR = Path(sys.argv[3])
 
     myLicense = Tp(LICENSE_TPL).substitute(
-        projectDescription="xCONF - C Library to Parse xCONF to C",
+        projectDescription="xCONF - A Configuration Language and Its Parser",
         projectName="xCONF",
         moduleName="grammar",
         filename="${filename}",
