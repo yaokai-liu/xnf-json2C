@@ -66,3 +66,18 @@ if __name__ == '__main__':
     XCONFGenerator.set_token_prefix("XCONF")
     XCONFGenerator.set_prefix("XCONF")
     XCONFGenerator.generate()
+
+    XCONFPathGenerator = Generator(json_dir=JSON_DIR / "Path",
+                               template_dir=TEMPLATE_DIR / "Path",
+                               out_dir=OUT_DIR / "Path",
+                               target="Path")
+    XCONFPathGenerator.set_license(Tp(myLicense).substitute(filename="${filename}"))
+    tokens = sorted(set(XCONFPathGenerator.tokens) | set(TERMINALS.keys()))
+    XCONFPathGenerator.set_extend_tokens(tokens)
+    XCONFPathGenerator.set_context("XCONFContext")
+    XCONFPathGenerator.set_token_prefix("XCONF")
+    XCONFPathGenerator.set_state_prefix("XCONF_Path")
+    XCONFPathGenerator.set_rule_prefix("XCONF_PATH")
+    XCONFPathGenerator.set_prefix("XCONF")
+    XCONFPathGenerator.gen_rules()
+    XCONFPathGenerator.gen_action_table()

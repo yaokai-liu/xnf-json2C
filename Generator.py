@@ -67,8 +67,8 @@ class Action:
 
     def __eq__(self, other):
         return self.action == other.action \
-            and self.type == other.type \
-            and self.count == other.count \
+            and self.type == other.type    \
+            and self.count == other.count  \
             and self.offset == other.offset
 
     def to_string(self):
