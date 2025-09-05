@@ -103,7 +103,9 @@ class Generator:
             self.status[s], self.reflect[p] = self.table[p], s
         self.extend_tokens = self.tokens
         self.context = "void"
+        self.state_prefix = ""
         self.token_prefix = ""
+        self.rule_prefix = ""
         self.prefix = ""
         self.types = dict()
 
@@ -118,6 +120,12 @@ class Generator:
 
     def set_prefix(self, prefix: str):
         self.prefix = prefix
+
+    def set_state_prefix(self, prefix: str):
+        self.state_prefix = prefix
+
+    def set_rule_prefix(self, prefix: str):
+        self.rule_prefix = prefix
 
     def set_token_prefix(self, prefix: str):
         self.token_prefix = prefix
@@ -137,16 +145,18 @@ class Generator:
         with open(self.TEMPLATE_DIR / filename, 'r') as fp:
             return fp.read()
     def rule_to_name(self, rule: str):
+        rule_prefix = self.rule_prefix or self.prefix
         if rule == '__EXTEND_RULE__':
-            return f'{self.prefix}_{self.GRAMMAR_TARGET}_EXT'
+            return f'{rule_prefix}_{self.GRAMMAR_TARGET}_EXT'
         else:
-            return f'{self.prefix}_{rule}'
+            return f'{rule_prefix}_{rule}'
 
     def rule_to_enum(self, rule: str):
+        rule_prefix = self.rule_prefix or self.prefix
         if rule == '__EXTEND_RULE__':
-            return f'{self.prefix}_RULE_{self.GRAMMAR_TARGET}_EXT'
+            return f'{rule_prefix}_RULE_{self.GRAMMAR_TARGET}_EXT'
         else:
-            return f'{self.prefix}_RULE_{rule}'
+            return f'{rule_prefix}_RULE_{rule}'
 
     def rule_target(self, rule: str):
         target = re.sub(r'_\d+$', '', rule) if rule != '__EXTEND_RULE__' else self.GRAMMAR_TARGET
@@ -163,18 +173,20 @@ class Generator:
             fp.write(terminals_entry)
 
     def state_to_enum(self, p):
+        state_prefix = self.state_prefix or self.prefix
         p = p.strip('()').split(', ')
         _state = '_'.join(p)
         current = 'TERMINATOR' if len(p) == 1 and p[0] == '' else p[-1]
-        _state = f'{self.prefix}_state_{_state}' if _state else f'{self.prefix}_state_'
+        _state = f'{state_prefix}_state_{_state}' if _state else f'{state_prefix}_state_'
         return _state, current
 
     def gen_rules(self):
+        rule_prefix = self.rule_prefix or self.prefix
         rule_names = self.rules.keys()
         args = f"(Token argv[], {self.context} *, ErrInfo *, const Allocator * allocator)"
         enum_reduces = sorted(f"{self.rule_to_enum(r)} = {i + 1}" for i, r in enumerate(rule_names))
         rules = sorted(f"{self.rule_target(r)} * {self.rule_to_name(r)} {args};" for r in rule_names)
-        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{self.prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
+        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{rule_prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
         template = Tp(self.get_temp_from("rules.h.tpl"))
         _license = Tp(self.license).substitute(filename="rules.gen.h")
         content = template.substitute(
