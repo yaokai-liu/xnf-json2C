@@ -49,13 +49,16 @@ class Rule:
 
 class Action:
     def __init__(self, p, generator):
+        rule_prefix = generator.rule_prefix or generator.prefix
+        state_prefix = generator.state_prefix or generator.prefix
+        token_prefix = generator.token_prefix or generator.prefix
+
         if not p.startswith('('):
             rule = Rule(p, generator)
             self.action = f"{generator.prefix}_action_reduce"
-            self.type = f"{generator.token_prefix}_TOKEN_{rule.target}"
+            self.type = f"{token_prefix}_TOKEN_{rule.target}"
             self.count = len(rule.items)
-            self.offset = f"{generator.prefix}_RULE_{p}" if p != "__EXTEND_RULE__" \
-                          else f"{generator.prefix}_RULE_{rule.target}_EXT"
+            self.offset = f"{rule_prefix}_RULE_{p}" if p != "__EXTEND_RULE__" else f"{rule_prefix}_RULE_{rule.target}_EXT"
         else:
             self.action = f"{generator.prefix}_action_stack"
             self.type = 0
@@ -163,11 +166,12 @@ class Generator:
         return self.types.get(target) or target
 
     def gen_terminals(self):
+        token_prefix = self.token_prefix or self.prefix
         _license = Tp(self.license).substitute(filename="terminal.gen.c")
         template = Tp(self.get_temp_from("terminal.c.tpl"))
-        body = ',\n  '.join([f'{self.token_prefix}_TOKEN_{t}' for t in self.terminals if TERMINALS[t] != 0])
-        strings = ',\n  '.join([f'[{self.token_prefix}_TOKEN_{t}] = string_t("{TERMINALS[t]}")' for t in self.terminals if TERMINALS[t] != 0])
-        string_lens = ',\n  '.join([f'[{self.token_prefix}_TOKEN_{t}] = {len(TERMINALS[t])}' for t in self.terminals if TERMINALS[t] != 0])
+        body = ',\n  '.join([f'{token_prefix}_TOKEN_{t}' for t in self.terminals if TERMINALS[t] != 0])
+        strings = ',\n  '.join([f'[{token_prefix}_TOKEN_{t}] = string_t("{TERMINALS[t]}")' for t in self.terminals if TERMINALS[t] != 0])
+        string_lens = ',\n  '.join([f'[{token_prefix}_TOKEN_{t}] = {len(TERMINALS[t])}' for t in self.terminals if TERMINALS[t] != 0])
         terminals_entry = template.substitute(license=_license, strings=strings, string_lens=string_lens, terminals=body)
         with open(self.OUT_DIR / "terminal.gen.c", 'w') as fp:
             fp.write(terminals_entry)
@@ -206,6 +210,7 @@ class Generator:
 
 
     def gen_action_table(self):
+        token_prefix = self.token_prefix or self.prefix
         def token_cmp(t1, t2):
             a = self.extend_tokens.index(t1)
             b = self.extend_tokens.index(t2)
@@ -235,10 +240,10 @@ class Generator:
                 items[t] = i
             for i, t in enumerate(sorted(_tokens)):
                 ndx.append(str(i))
-                units.append(f"{{.type = {self.token_prefix}_TOKEN_{t}, .offset = {items[t]}}}")
+                units.append(f"{{.type = {token_prefix}_TOKEN_{t}, .offset = {items[t]}}}")
             string = ', '.join([f".{k} = {v}" for k, v in state.items()])
             states.append(f"[{_state}] = {{{string}}}")
-            currents.append(f"[{_state}] = {self.token_prefix}_TOKEN_{current}")
+            currents.append(f"[{_state}] = {token_prefix}_TOKEN_{current}")
 
         template = Tp(self.get_temp_from("action-table.c.tpl"))
         _license = Tp(self.license).substitute(filename="action-table.gen.c")
