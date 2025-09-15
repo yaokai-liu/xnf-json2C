@@ -49,13 +49,16 @@ class Rule:
 
 class Action:
     def __init__(self, p, generator):
+        rule_prefix = generator.rule_prefix or generator.prefix
+        state_prefix = generator.state_prefix or generator.prefix
+        token_prefix = generator.token_prefix or generator.prefix
+
         if not p.startswith('('):
             rule = Rule(p, generator)
             self.action = f"{generator.prefix}_action_reduce"
-            self.type = f"{generator.token_prefix}_TOKEN_{rule.target}"
+            self.type = f"{token_prefix}_TOKEN_{rule.target}"
             self.count = len(rule.items)
-            self.offset = f"{generator.prefix}_RULE_{p}" if p != "__EXTEND_RULE__" \
-                          else f"{generator.prefix}_RULE_{rule.target}_EXT"
+            self.offset = f"{rule_prefix}_RULE_{p}" if p != "__EXTEND_RULE__" else f"{rule_prefix}_RULE_{rule.target}_EXT"
         else:
             self.action = f"{generator.prefix}_action_stack"
             self.type = 0
@@ -103,7 +106,9 @@ class Generator:
             self.status[s], self.reflect[p] = self.table[p], s
         self.extend_tokens = self.tokens
         self.context = "void"
+        self.state_prefix = ""
         self.token_prefix = ""
+        self.rule_prefix = ""
         self.prefix = ""
         self.types = dict()
 
@@ -118,6 +123,12 @@ class Generator:
 
     def set_prefix(self, prefix: str):
         self.prefix = prefix
+
+    def set_state_prefix(self, prefix: str):
+        self.state_prefix = prefix
+
+    def set_rule_prefix(self, prefix: str):
+        self.rule_prefix = prefix
 
     def set_token_prefix(self, prefix: str):
         self.token_prefix = prefix
@@ -137,44 +148,49 @@ class Generator:
         with open(self.TEMPLATE_DIR / filename, 'r') as fp:
             return fp.read()
     def rule_to_name(self, rule: str):
+        rule_prefix = self.rule_prefix or self.prefix
         if rule == '__EXTEND_RULE__':
-            return f'{self.prefix}_{self.GRAMMAR_TARGET}_EXT'
+            return f'{rule_prefix}_{self.GRAMMAR_TARGET}_EXT'
         else:
-            return f'{self.prefix}_{rule}'
+            return f'{rule_prefix}_{rule}'
 
     def rule_to_enum(self, rule: str):
+        rule_prefix = self.rule_prefix or self.prefix
         if rule == '__EXTEND_RULE__':
-            return f'{self.prefix}_RULE_{self.GRAMMAR_TARGET}_EXT'
+            return f'{rule_prefix}_RULE_{self.GRAMMAR_TARGET}_EXT'
         else:
-            return f'{self.prefix}_RULE_{rule}'
+            return f'{rule_prefix}_RULE_{rule}'
 
     def rule_target(self, rule: str):
         target = re.sub(r'_\d+$', '', rule) if rule != '__EXTEND_RULE__' else self.GRAMMAR_TARGET
         return self.types.get(target) or target
 
     def gen_terminals(self):
+        token_prefix = self.token_prefix or self.prefix
         _license = Tp(self.license).substitute(filename="terminal.gen.c")
         template = Tp(self.get_temp_from("terminal.c.tpl"))
-        body = ',\n  '.join([f'{self.token_prefix}_TOKEN_{t}' for t in self.terminals if TERMINALS[t] != 0])
-        strings = ',\n  '.join([f'[{self.token_prefix}_TOKEN_{t}] = string_t("{TERMINALS[t]}")' for t in self.terminals if TERMINALS[t] != 0])
-        string_lens = ',\n  '.join([f'[{self.token_prefix}_TOKEN_{t}] = {len(TERMINALS[t])}' for t in self.terminals if TERMINALS[t] != 0])
+        body = ',\n  '.join([f'{token_prefix}_TOKEN_{t}' for t in self.terminals if TERMINALS[t] != 0])
+        strings = ',\n  '.join([f'[{token_prefix}_TOKEN_{t}] = string_t("{TERMINALS[t]}")' for t in self.terminals if TERMINALS[t] != 0])
+        string_lens = ',\n  '.join([f'[{token_prefix}_TOKEN_{t}] = {len(TERMINALS[t])}' for t in self.terminals if TERMINALS[t] != 0])
         terminals_entry = template.substitute(license=_license, strings=strings, string_lens=string_lens, terminals=body)
         with open(self.OUT_DIR / "terminal.gen.c", 'w') as fp:
             fp.write(terminals_entry)
 
     def state_to_enum(self, p):
+        state_prefix = self.state_prefix or self.prefix
         p = p.strip('()').split(', ')
         _state = '_'.join(p)
         current = 'TERMINATOR' if len(p) == 1 and p[0] == '' else p[-1]
-        _state = f'{self.prefix}_state_{_state}' if _state else f'{self.prefix}_state_'
+        _state = f'{state_prefix}_state_{_state}' if _state else f'{state_prefix}_state_'
         return _state, current
 
     def gen_rules(self):
+        rule_prefix = self.rule_prefix or self.prefix
         rule_names = self.rules.keys()
         args = f"(Token argv[], {self.context} *, ErrInfo *, const Allocator * allocator)"
         enum_reduces = sorted(f"{self.rule_to_enum(r)} = {i + 1}" for i, r in enumerate(rule_names))
         rules = sorted(f"{self.rule_target(r)} * {self.rule_to_name(r)} {args};" for r in rule_names)
-        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{self.prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
+        assign_reduces = sorted([f"[{self.rule_to_enum(r)}] = (fn_{rule_prefix.lower()}_reduce *) {self.rule_to_name(r)}" for r in rule_names])
         template = Tp(self.get_temp_from("rules.h.tpl"))
         _license = Tp(self.license).substitute(filename="rules.gen.h")
         content = template.substitute(
@@ -194,6 +210,7 @@ class Generator:
 
 
     def gen_action_table(self):
+        token_prefix = self.token_prefix or self.prefix
         def token_cmp(t1, t2):
             a = self.extend_tokens.index(t1)
             b = self.extend_tokens.index(t2)
@@ -223,10 +240,10 @@ class Generator:
                 items[t] = i
             for i, t in enumerate(sorted(_tokens)):
                 ndx.append(str(i))
-                units.append(f"{{.type = {self.token_prefix}_TOKEN_{t}, .offset = {items[t]}}}")
+                units.append(f"{{.type = {token_prefix}_TOKEN_{t}, .offset = {items[t]}}}")
             string = ', '.join([f".{k} = {v}" for k, v in state.items()])
             states.append(f"[{_state}] = {{{string}}}")
-            currents.append(f"[{_state}] = {self.token_prefix}_TOKEN_{current}")
+            currents.append(f"[{_state}] = {token_prefix}_TOKEN_{current}")
 
         template = Tp(self.get_temp_from("action-table.c.tpl"))
         _license = Tp(self.license).substitute(filename="action-table.gen.c")
