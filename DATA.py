@@ -7,6 +7,7 @@ TERMINALS = {
     "ENUM": "enum",
     "TOKEN": "token",
     "WHILE": "while",
+    "ATTR": "attribute",
 
     "TEXT": 0,
     "IDENTIFIER": 0,
