@@ -5,9 +5,9 @@ TERMINALS = {
     "FOR": "for",
     "ELSE": "else",
     "ENUM": "enum",
+    "ATTR": "attr",
     "TOKEN": "token",
     "WHILE": "while",
-    "ATTR": "attribute",
 
     "TEXT": 0,
     "IDENTIFIER": 0,
