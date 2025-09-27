@@ -13,8 +13,7 @@ TERMINALS = {
     "IDENTIFIER": 0,
     "SINGLE_CHAR": 0,
     "VAL_LITERAL": 0,
-    "BUILTIN_VARIABLE": 0,
-    "BUILTIN_FUNCTION": 0,
+    "BUILTIN_IDENTIFIER": 0,
 
     "AT": "@",
     "DOT": ".",
