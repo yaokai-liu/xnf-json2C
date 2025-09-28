@@ -10,6 +10,10 @@ TERMINALS = {
     "WHILE": "while",
 
     "TEXT": 0,
+    "ATTRNAME": 0,
+    "TYPENAME": 0,
+    "RULENAME": 0,
+    "ENUM_GROUP": 0,
     "IDENTIFIER": 0,
     "SINGLE_CHAR": 0,
     "VAL_LITERAL": 0,
