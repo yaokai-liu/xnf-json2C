@@ -26,8 +26,8 @@ TERMINALS = {
     "VAL_LITERAL": 0,
     "BUILTIN_IDENTIFIER": 0,
 
-    "AT": "@",
     "DOT": ".",
+    "GET": "!.",
     "COMMA": ",",
     "COLON": ":",
     "ASSIGNER": "=",
