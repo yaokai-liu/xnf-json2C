@@ -5,9 +5,13 @@ TERMINALS = {
     "FOR": "for",
     "ELSE": "else",
     "ENUM": "enum",
+    "RULE": "rule",
+    "BREAK": "break",
     "WHILE": "while",
+    "RETURN": "return",
     "TYPEDEF": "typedef",
     "ATTRDEF": "attrdef",
+    "CONTINUE": "continue",
     "ATTRIBUTE": "attribute",
 
     "TEXT": 0,
