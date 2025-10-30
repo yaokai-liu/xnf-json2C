@@ -98,6 +98,7 @@ class Generator:
             self.table = self.get_json_from("automaton-compact.json")
         else:
             self.table = self.get_json_from("automaton.json")
+        self.folded_states = self.get_json_from("folded_states.json")
         for val in self.table.values():
             if '$' in val.keys(): val['TERMINATOR'] = val.pop('$')
         self.rules = self.get_json_from("rules.json")
@@ -244,6 +245,11 @@ class Generator:
             string = ', '.join([f".{k} = {v}" for k, v in state.items()])
             states.append(f"[{_state}] = {{{string}}}")
             currents.append(f"[{_state}] = {token_prefix}_TOKEN_{current}")
+
+        for p, q in self.folded_states.items():
+            folded_state, _ = self.state_to_enum(p)
+            showed_state, _ = self.state_to_enum(q)
+            state_enum.append(f'{folded_state} = {showed_state}')
 
         template = Tp(self.get_temp_from("action-table.c.tpl"))
         _license = Tp(self.license).substitute(filename="action-table.gen.c")
