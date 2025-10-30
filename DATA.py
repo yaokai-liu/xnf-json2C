@@ -27,7 +27,7 @@ TERMINALS = {
     "BUILTIN_IDENTIFIER": 0,
 
     "DOT": ".",
-    "GET": "!.",
+    "NOT": "!",
     "COMMA": ",",
     "COLON": ":",
     "ASSIGNER": "=",
@@ -44,9 +44,8 @@ TERMINALS = {
     "RIGHT_SQUARE_BRACKET": "]",
 
 
-    "COND_SIN_OP": 0,
-    "COND_BIN_OP": 0,
     "COMPARE_OP": 0,
+    "COND_BIN_OP": 0,
 
     "ARITH_0_OP": 0,
 
