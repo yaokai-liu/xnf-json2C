@@ -7,14 +7,10 @@ TERMINALS = {
     "PROOF": "Proof",
     "LATEX": "Latex",
 
-    "Notation": 0,
-    "NotationBlock": 0,
-    "LatexExpression": 0,
-    "NotationDefinitions": 0,
+    "LONG_LATEX_SYMBOL": 0,
+    "SINGLE_LATEX_SYMBOL": 0,
 
-
-    "DE": 0,
-    "THE": 0,
+    "THE": "the",
     "NOUN": 0,
     "VERB": 0,
     "NUMBER": 0,
@@ -22,16 +18,20 @@ TERMINALS = {
     "ADVERB": 0,
     "ADJECTIVE": 0,
     "PREP": 0,
+    "CLAUSE": 0,
     "CONJUNCTION": 0,
     "QUANTIFIER": 0,
-    "ENTRY_TYPE": 0,
+    "IDENTIFIER": 0,
 
     "DOT": ".",
     "NOT": "!",
     "COMMA": ",",
     "COLON": ":",
+    "HASHTAG": "#",
     "ASSIGNER": "=",
     "SEMICOLON": ";",
+    "CIRCUMFLEX": "^",
+    "UNDERSCORE": "_",
     "VERTICAL_BAR": "|",
     "DOUBLE_COLON": "::",
     "QUESTION_MARK": "?",
@@ -46,6 +46,8 @@ TERMINALS = {
     "RIGHT_SQUARE_BRACKET": "]",
     "DOUBLE_LEFT_SQUARE_BRACKET": "[[",
     "DOUBLE_RIGHT_SQUARE_BRACKET": "]]",
+    "LEFT_LATEX_BRACKET": "<$",
+    "RIGHT_LATEX_BRACKET": "$>",
 
     "TERMINATOR": 0
 }
