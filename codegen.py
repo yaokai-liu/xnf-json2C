@@ -47,9 +47,15 @@ if __name__ == '__main__':
                        template_dir=TEMPLATE_DIR / "Mathlang",
                        out_dir=OUT_DIR / "Mathlang",
                        target="GrammarEntry")
+    G_LATEX = Generator(json_dir=JSON_DIR / "Latex",
+                        template_dir=TEMPLATE_DIR / "Latex",
+                        out_dir=OUT_DIR / "Latex",
+                        target="Latex")
     G_MATHLANG.set_license(Tp(myLicense).substitute(filename="${filename}"))
-    tokens = sorted(set(G_MATHLANG.tokens) | set(TERMINALS.keys()))
+    G_LATEX.set_license(Tp(myLicense).substitute(filename="${filename}"))
+    tokens = sorted(set(G_MATHLANG.tokens) | set(G_LATEX.tokens) | set(TERMINALS.keys()))
     G_MATHLANG.set_extend_tokens(tokens)
+    G_LATEX.set_extend_tokens(tokens)
 
     myLicense = Tp(myLicense).substitute(filename="${filename}")
 
@@ -68,5 +74,8 @@ if __name__ == '__main__':
     G_MATHLANG.set_context("MLContext")
     G_MATHLANG.set_token_prefix("MATHLANG")
     G_MATHLANG.set_prefix("MATHLANG")
-    G_MATHLANG.set_types(TYPES)
+    G_LATEX.set_token_prefix("MATHLANG")
+    G_LATEX.set_context("MacroContext")
+    G_LATEX.set_prefix("Macro")
     G_MATHLANG.generate()
+    G_LATEX.generate()

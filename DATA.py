@@ -7,8 +7,7 @@ TERMINALS = {
     "PROOF": "Proof",
     "LATEX": "Latex",
 
-    "LONG_LATEX_SYMBOL": 0,
-    "SINGLE_LATEX_SYMBOL": 0,
+    "LATEX_EXPRESSION": 0,
 
     "THE": "the",
     "NOUN": 0,
@@ -46,8 +45,11 @@ TERMINALS = {
     "RIGHT_SQUARE_BRACKET": "]",
     "DOUBLE_LEFT_SQUARE_BRACKET": "[[",
     "DOUBLE_RIGHT_SQUARE_BRACKET": "]]",
-    "LEFT_LATEX_BRACKET": "<$",
-    "RIGHT_LATEX_BRACKET": "$>",
+
+    "LATEX_DELIMITER": "$",
+    "LONG_LATEX_SYMBOL": 0,
+    "SINGLE_LATEX_SYMBOL": 0,
+    "NOTATION": 0,
 
     "TERMINATOR": 0
 }
