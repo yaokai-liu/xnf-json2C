@@ -1,40 +1,31 @@
 TERMINALS = {
     "DEFINITION_TYPE": 0, # "Definition", "Convention",
-    "THEOREM_TYPE": 0, # "proposition", "Conclusion", "Theorem", "Lemma",
+    "THEOREM_TYPE": 0, # "Proposition", "Conclusion", "Theorem", "Lemma",
     "AXIOM_TYPE": 0, # "Axiom" "Assumption",
     "PROCEDURE": "Procedure",
-    "DENOTEAS": "Denoteas",
+    "DENOTEAS": "denoteas",
     "PROOF": "Proof",
-    "LATEX": "Latex",
+    "LATEX": "latex",
 
-    "LATEX_EXPRESSION": 0,
-
-    "THE": "the",
     "NOUN": 0,
     "VERB": 0,
-    "NUMBER": 0,
-    "PRONOUN": 0,
-    "ADVERB": 0,
-    "ADJECTIVE": 0,
     "PREP": 0,
     "CLAUSE": 0,
+    "NUMBER": 0,
+    "ADVERB": 0,
+    "PRONOUN": 0,
+    "ARTICLE": 0,
+    "ADJECTIVE": 0,
     "CONJUNCTION": 0,
-    "QUANTIFIER": 0,
-    "IDENTIFIER": 0,
 
-    "DOT": ".",
-    "NOT": "!",
-    "COMMA": ",",
-    "COLON": ":",
+
     "HASHTAG": "#",
-    "ASSIGNER": "=",
-    "SEMICOLON": ";",
     "CIRCUMFLEX": "^",
     "UNDERSCORE": "_",
-    "VERTICAL_BAR": "|",
-    "DOUBLE_COLON": "::",
-    "QUESTION_MARK": "?",
 
+    "DOT": ".",
+    "COMMA": ",",
+    "SEMICOLON": ";",
     "LEFT_BRACKET": "{",
     "RIGHT_BRACKET": "}",
     "LEFT_PARENTHESIS": "(",
@@ -48,6 +39,11 @@ TERMINALS = {
 
     "LATEX_DELIMITER": "$",
     "LATEX_SYMBOL": 0, # ("\" IDENTIFIER | LETTER | NUMBER | BUILTIN_SYMBOLS)
+
+    # Assistant token type
+    "IDENTIFIER": 0,
+    "LATEX_EXPRESSION": 0,
+    "Notation": 0,
 
     "TERMINATOR": 0
 }
