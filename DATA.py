@@ -7,17 +7,16 @@ TERMINALS = {
     "PROOF": "Proof",
     "LATEX": "latex",
 
-    "NOUN": 0,
-    "VERB": 0,
-    "PREP": 0,
-    "CLAUSE": 0,
-    "NUMBER": 0,
-    "ADVERB": 0,
-    "PRONOUN": 0,
-    "ARTICLE": 0,
-    "ADJECTIVE": 0,
-    "CONJUNCTION": 0,
-
+    "NOUN": 0, # IDENTIFIER
+    "VERB": 0, # IDENTIFIER
+    "PREP": 0, # IDENTIFIER
+    "CLAUSE": 0, # IDENTIFIER
+    "NUMBER": 0, # IDENTIFIER
+    "ADVERB": 0, # IDENTIFIER
+    "PRONOUN": 0, # IDENTIFIER
+    "ARTICLE": 0, # IDENTIFIER
+    "ADJECTIVE": 0, # IDENTIFIER
+    "CONJUNCTION": 0, # IDENTIFIER
 
     "HASHTAG": "#",
     "CIRCUMFLEX": "^",
@@ -38,12 +37,10 @@ TERMINALS = {
     "DOUBLE_RIGHT_SQUARE_BRACKET": "]]",
 
     "LATEX_DELIMITER": "$",
-    "LATEX_SYMBOL": 0, # ("\" IDENTIFIER | LETTER | NUMBER | BUILTIN_SYMBOLS)
+    "LATEX_COMMAND": 0, # \\[a-zA-Z]+
+    "LATEX_SYMBOL": 0, # LATEX_COMMAND | [a-zA-Z0-9] | [+-*/&<>?|;:',.] | \\[.,:;!\\%$#@&^_{}[]~ ]
 
-    # Assistant token type
-    "IDENTIFIER": 0,
-    "LATEX_EXPRESSION": 0,
-    "Notation": 0,
+    "IDENTIFIER": 0, # [a-zA-Z][a-zA-Z0-9\-]*
 
     "TERMINATOR": 0
 }

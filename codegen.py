@@ -47,21 +47,9 @@ if __name__ == '__main__':
                        template_dir=TEMPLATE_DIR / "Mathlang",
                        out_dir=OUT_DIR / "Mathlang",
                        target="MathEntry")
-    G_LATEX = Generator(json_dir=JSON_DIR / "Latex",
-                        template_dir=TEMPLATE_DIR / "Latex",
-                        out_dir=OUT_DIR / "Latex",
-                        target="LatexExpression")
-    G_ARITH = Generator(json_dir=JSON_DIR / "Arith",
-                        template_dir=TEMPLATE_DIR / "Arith",
-                        out_dir=OUT_DIR / "Arith",
-                        target="Notation")
     G_MATHLANG.set_license(Tp(myLicense).substitute(filename="${filename}"))
-    G_LATEX.set_license(Tp(myLicense).substitute(filename="${filename}"))
-    G_ARITH.set_license(Tp(myLicense).substitute(filename="${filename}"))
-    tokens = sorted(set(G_MATHLANG.tokens) | set(G_LATEX.tokens) | set(G_ARITH.tokens) | set(TERMINALS.keys()))
+    tokens = sorted(set(G_MATHLANG.tokens) | set(TERMINALS.keys()))
     G_MATHLANG.set_extend_tokens(tokens)
-    G_LATEX.set_extend_tokens(tokens)
-    G_ARITH.set_extend_tokens(tokens)
 
     myLicense = Tp(myLicense).substitute(filename="${filename}")
 
@@ -78,14 +66,6 @@ if __name__ == '__main__':
                    OUT_DIR / "tokens.gen.c")
 
     G_MATHLANG.set_token_prefix("MATHLANG")
-    G_LATEX.set_token_prefix("MATHLANG")
-    G_ARITH.set_token_prefix("MATHLANG")
     G_MATHLANG.set_context("MathlangContext")
     G_MATHLANG.set_prefix("Mathlang")
-    G_LATEX.set_context("LatexContext")
-    G_LATEX.set_prefix("Latex")
-    G_LATEX.set_context("ArithContext")
-    G_LATEX.set_prefix("Arith")
     G_MATHLANG.generate()
-    G_LATEX.generate()
-    G_ARITH.generate()
