@@ -3,20 +3,27 @@ TERMINALS = {
     "THEOREM_TYPE": 0, # "Proposition", "Conclusion", "Theorem", "Lemma",
     "AXIOM_TYPE": 0, # "Axiom" "Assumption",
     "PROCEDURE": "Procedure",
-    "DENOTEAS": "denoteas",
+    "DENOTE": "denote",
     "PROOF": "Proof",
-    "LATEX": "latex",
+    "AS": "as",
+
+    "FROM": "from",
+    "IMPORT": "import",
+    "STAR": "*",
+    "PATH_STRING": 0,
+
+    "WORD_CAT": 0, # "@Noun", "@Verb", "@Prep", "@Clause", "@Adv", "@Adj", "@Pron", "@Art", "@Conj", "@Num"
 
     "NOUN": 0, # IDENTIFIER
     "VERB": 0, # IDENTIFIER
     "PREP": 0, # IDENTIFIER
     "CLAUSE": 0, # IDENTIFIER
-    "NUMBER": 0, # IDENTIFIER
     "ADVERB": 0, # IDENTIFIER
     "PRONOUN": 0, # IDENTIFIER
     "ARTICLE": 0, # IDENTIFIER
     "ADJECTIVE": 0, # IDENTIFIER
     "CONJUNCTION": 0, # IDENTIFIER
+    "NUMBER": 0,
 
     "HASHTAG": "#",
     "CIRCUMFLEX": "^",
