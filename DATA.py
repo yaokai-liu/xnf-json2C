@@ -8,6 +8,7 @@ TERMINALS = {
     "AS": "as",
 
     "FROM": "from",
+    "INTRO": "intro",
     "IMPORT": "import",
     "STAR": "*",
     "PATH_STRING": 0,
@@ -31,6 +32,7 @@ TERMINALS = {
 
     "DOT": ".",
     "COMMA": ",",
+    "COLON": ":",
     "SEMICOLON": ";",
     "LEFT_BRACKET": "{",
     "RIGHT_BRACKET": "}",
